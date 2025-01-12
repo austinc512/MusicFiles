@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace MusicFiles.Core.Domain.IdentityEntities;
@@ -5,8 +6,10 @@ namespace MusicFiles.Core.Domain.IdentityEntities;
 public class ApplicationUser : IdentityUser<Guid>
 {
     public Guid PublicUserId { get; private set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    [MaxLength(50)]
+    public string? FirstName { get; set; }
+    [MaxLength(50)]
+    public string? LastName { get; set; }
     
     // satisfy EF Core
     public ApplicationUser()

@@ -6,8 +6,10 @@ namespace MusicFiles.Core.DTOs.Request
     public class RegisterDto
     {
         [Required(ErrorMessage = "First name cannot be blank")]
+        [StringLength(50, ErrorMessage = "First name cannot be longer than 50 characters")]
         public string? FirstName { get; set; }
         [Required(ErrorMessage = "Last name cannot be blank")]
+        [StringLength(50, ErrorMessage = "Last name cannot be longer than 50 characters")]
         public string? LastName { get; set; }
         [Required(ErrorMessage = "Username cannot be blank")]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "Username must be between 5 and 20 characters long")]
@@ -17,7 +19,7 @@ namespace MusicFiles.Core.DTOs.Request
         [Required(ErrorMessage = "Email cannot be blank")]
         [EmailAddress(ErrorMessage = "Email address should be in a proper format")]
         public string? Email { get; set; }
-        [Required(ErrorMessage = "Phone cannot be blank")]
+        [Required(ErrorMessage = "Phone number cannot be blank")]
         [RegularExpression("^[0-9]*$", ErrorMessage = "Phone number should only contain numbers")]
         [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
