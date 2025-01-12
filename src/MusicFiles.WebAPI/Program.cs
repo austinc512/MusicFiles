@@ -3,7 +3,9 @@ using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MusicFiles.Core.Domain.IdentityEntities;
 using MusicFiles.Core.RepositoryContracts;
 using MusicFiles.Core.ServiceContracts;
 using MusicFiles.Core.Services;
@@ -51,12 +53,16 @@ builder.Services.AddDbContext<MusicFilesDbContext>(options =>
     }
     );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     {
         options.User.RequireUniqueEmail = true;
+        //  The default ASP.NET Identity database migration already applies a unique constraint on the UserName column.
     })
     .AddEntityFrameworkStores<MusicFilesDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddUserStore<UserStore<ApplicationUser, ApplicationRole, MusicFilesDbContext, Guid>>()
+    .AddRoleStore<RoleStore<ApplicationRole, MusicFilesDbContext, Guid>>();
+
 builder.Services.AddScoped<IMusicFilesRepository, MusicFilesRepository>();
 builder.Services.AddScoped<IMusicDataService, MusicDataService>();
 

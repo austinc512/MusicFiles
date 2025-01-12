@@ -19,10 +19,6 @@ public class MusicUploadController(IFileUploadService s3Service, IMusicDataServi
     [HttpPost("[action]")]
     public IActionResult RequestMediaUpload([FromBody]PreSignedUrlDto urlDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
         // Arguments: (string userPublicId, string fileName, TimeSpan expiration)
         // I'm using placeholder values for:
         // testPublicId (will be obtained through authentication)
@@ -38,18 +34,10 @@ public class MusicUploadController(IFileUploadService s3Service, IMusicDataServi
     
     // 2. client posts to that URL -- I need to test this action here or on the front end
     // I should do Auth before creating any front end.
-    
-    
     // 3. client posts back information to the server
     [HttpPost("[action]")]
     public async Task<IActionResult> CompleteMediaUpload([FromBody] MusicInfoDto sheetMusicRequest)
     {
-        
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        
         // again, user's PublicId will be exposed through authentication
         // We can still use the SheetMusicInfoDto class, and check whether the PublicId from the DTO matches the one returned through auth.
         // S3Key format: users/PublicId/FileName

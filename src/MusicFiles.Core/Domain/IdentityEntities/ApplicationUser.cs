@@ -9,7 +9,10 @@ public class ApplicationUser : IdentityUser<Guid>
     public string LastName { get; set; }
     
     // satisfy EF Core
-    public ApplicationUser() {}
+    public ApplicationUser()
+    {
+        PublicUserId = Guid.NewGuid();
+    }
     
     // I don't necessarily need this constructor
     // I was just using an object initializer with the base class before

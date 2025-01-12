@@ -1,0 +1,27 @@
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore user-specific settings
+*.user
+*.dotsettings
+
+# Ignore sensitive configuration files
+appsettings.json
+appsettings.Development.json
+
+# Ignore other unwanted files
+*.suo
+*.vs
+.vscode/
+.idea/
+
+# Ignore test results
+TestResults/
+
+# Ignore extra stuff that shouldn't be exposed to the outside world
+TestController.cs
+DevControllerActions.cs
+
+# Db design might change for a while, so let's not include migrations
+Migrations/
