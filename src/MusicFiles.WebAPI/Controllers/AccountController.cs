@@ -16,10 +16,10 @@ namespace MusicFiles.WebAPI.Controllers
         // this service can be used by other background services outside of Controllers
         // better adherence to Clean Architecture and Hexagonal Architecture
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationRole> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         
         public AccountController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationRole> signInManager)
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -28,7 +28,6 @@ namespace MusicFiles.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            
             
             var user = new ApplicationUser() 
             {
@@ -90,4 +89,3 @@ namespace MusicFiles.WebAPI.Controllers
     }
 
 }
-
