@@ -55,6 +55,14 @@ public static class ServiceCollectionExtensions
             {
                 options.User.RequireUniqueEmail = true;
                 //  The default ASP.NET Identity database migration already applies a unique constraint on the UserName column.
+                
+                // RequiredUniqueChars is the only non-default option here, but I want to be explicit/self-documenting. 
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredUniqueChars = 4;
             })
             .AddEntityFrameworkStores<MusicFilesDbContext>()
             .AddDefaultTokenProviders()
@@ -71,7 +79,6 @@ public static class ServiceCollectionExtensions
                 .RequireAuthenticatedUser()
                 .Build();
         });
-        
         
         return services;
     }
