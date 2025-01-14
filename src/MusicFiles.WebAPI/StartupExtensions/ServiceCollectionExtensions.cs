@@ -53,9 +53,8 @@ public static class ServiceCollectionExtensions
         // Identity
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
-                options.User.RequireUniqueEmail = true;
                 //  The default ASP.NET Identity database migration already applies a unique constraint on the UserName column.
-                
+                options.User.RequireUniqueEmail = true;
                 // RequiredUniqueChars is the only non-default option here, but I want to be explicit/self-documenting. 
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = true;

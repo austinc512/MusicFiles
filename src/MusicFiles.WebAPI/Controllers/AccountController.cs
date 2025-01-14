@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusicFiles.Core.Domain.IdentityEntities;
 using MusicFiles.Core.DTOs.Request;
+using MusicFiles.Core.Enums;
 
 namespace MusicFiles.WebAPI.Controllers
 {
@@ -17,17 +18,29 @@ namespace MusicFiles.WebAPI.Controllers
         // better adherence to Clean Architecture and Hexagonal Architecture
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         
         public AccountController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
+            
+            // check valid UserTypeOptions before creating ApplicationUser
+            if (model.UserType != UserTypeOptions.Customer
+                && model.UserType != UserTypeOptions.Publisher)
+            {
+                // fix this error handling later
+                // I need a more consistent API for handling errors.
+                return BadRequest(new { message = "Valid user types are: Customer, Publisher" });
+            }
             
             var user = new ApplicationUser() 
             {
@@ -43,12 +56,39 @@ namespace MusicFiles.WebAPI.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password!);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return Ok(new { Message = "User registered successfully" });
+                return BadRequest(result.Errors);
             }
+            
+            // create Roles
+            if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
+            {
+                var applicationRole = new ApplicationRole()
+                {
+                    Name = UserTypeOptions.Admin.ToString()
+                };
+                await _roleManager.CreateAsync(applicationRole);
+            }
+            if (await _roleManager.FindByNameAsync(UserTypeOptions.Customer.ToString()) is null)
+            {
+                var applicationRole = new ApplicationRole()
+                {
+                    Name = UserTypeOptions.Admin.ToString()
+                };
+                await _roleManager.CreateAsync(applicationRole);
+            }
+            if (await _roleManager.FindByNameAsync(UserTypeOptions.Publisher.ToString()) is null)
+            {
+                var applicationRole = new ApplicationRole()
+                {
+                    Name = UserTypeOptions.Admin.ToString()
+                };
+                await _roleManager.CreateAsync(applicationRole);
+            }
+            
+            return Ok(new { Message = "User registered successfully" });
 
-            return BadRequest(result.Errors);
         }
 
         [HttpPost]

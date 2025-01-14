@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MusicFiles.WebAPI.StartupExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,12 @@ builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
 
 // Register services for Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // allows enum values to be passed via API as their string representations
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });;
 
 var app = builder.Build();
 
