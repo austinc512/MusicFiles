@@ -55,14 +55,40 @@ namespace MusicFiles.WebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
 
-            var result = await _signInManager.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.UserRememberMe = false, false);
+            var user = model.UserNameOrEmail.Contains("@")
+                ? await _userManager.FindByEmailAsync(model.UserNameOrEmail)
+                : await _userManager.FindByNameAsync(model.UserNameOrEmail);
 
-            if (result.Succeeded)
+            if (user is null)
             {
-                return Ok(new { Message = "Login successful" });
+                return Unauthorized(new { Message = "Invalid username or email." });
             }
 
-            return Unauthorized(new { Message = "Invalid email or password" });
+            var result = await _signInManager.PasswordSignInAsync(user, 
+                model.UserPassword, isPersistent: model.UserRememberMe, lockoutOnFailure: false);
+          
+            if (!result.Succeeded) return Unauthorized(new { Message = "Invalid password." });
+        
+            // _jwt service not implemented yet, but might look something like this:
+            // var authenticationResponse = _jwtService.CreateJwtToken(user);
+            
+            // Update refresh token in user record
+            // user.RefreshToken = authenticationResponse.RefreshToken;
+            // user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
+            // await _userManager.UpdateAsync(user);
+            
+            // return Ok(authenticationResponse);
+            
+            // placeholder value for the time being
+            return Ok(new { Message = "User successfully logged in" });
+            
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return NoContent();
         }
         
         // Methods for checking whether Email/UserName is already registered

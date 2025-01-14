@@ -6,10 +6,11 @@ namespace MusicFiles.Core.DTOs.Request;
 /// </summary>
 public class LoginDto
 {
-    [Required(ErrorMessage = "Email can't be blank")]
-    [EmailAddress(ErrorMessage = "Email should be in a proper email address format")]
-    [DataType(DataType.EmailAddress)]
-    public string UserEmail { get; set; } = String.Empty;
+    [Required(ErrorMessage = "Email/Username can't be blank")]
+    [StringLength(50, ErrorMessage = "Email/Username can't be longer than 50 characters")]
+    // [EmailAddress(ErrorMessage = "Email should be in a proper email address format")]
+    // [DataType(DataType.EmailAddress)]
+    public string UserNameOrEmail { get; set; } = String.Empty;
     [Required(ErrorMessage = "Password can't be blank")]
     [DataType(DataType.Password)]
     public string UserPassword { get; set; } = String.Empty;
