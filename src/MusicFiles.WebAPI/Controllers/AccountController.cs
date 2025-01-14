@@ -94,7 +94,7 @@ namespace MusicFiles.WebAPI.Controllers
         // Methods for checking whether Email/UserName is already registered
         // Feature: there NEEDS to be rate limiting for these endpoints
         [HttpPost]
-        public async Task<IActionResult> IsEmailRegistered(string email)
+        public async Task<IActionResult> IsEmailRegistered([FromQuery] string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             return Ok(new
@@ -104,7 +104,7 @@ namespace MusicFiles.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> IsUsernameRegistered(string userName)
+        public async Task<IActionResult> IsUsernameRegistered([FromQuery] string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             return Ok(new

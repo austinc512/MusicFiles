@@ -12,11 +12,9 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure middleware pipeline
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map controller endpoints
-app.MapControllers();
+app.UseRouting(); // Match request URL to a route.
+app.UseAuthentication(); // Validate JWT and set HttpContext.User
+app.UseAuthorization(); // Enforce access control rules
+app.MapControllers(); // Handle request using appropriate controller/action
 
 app.Run();

@@ -19,9 +19,8 @@ appsettings.Development.json
 # Ignore test results
 TestResults/
 
-# Ignore extra stuff that shouldn't be exposed to the outside world
-TestController.cs
-DevControllerActions.cs
-
 # Db design might change for a while, so let's not include migrations
 Migrations/
+
+# internal usage
+DevController/
