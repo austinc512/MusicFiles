@@ -62,30 +62,6 @@ namespace MusicFiles.WebAPI.Controllers
             }
             
             // create Roles
-            if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
-            {
-                var applicationRole = new ApplicationRole()
-                {
-                    Name = UserTypeOptions.Admin.ToString()
-                };
-                await _roleManager.CreateAsync(applicationRole);
-            }
-            if (await _roleManager.FindByNameAsync(UserTypeOptions.Customer.ToString()) is null)
-            {
-                var applicationRole = new ApplicationRole()
-                {
-                    Name = UserTypeOptions.Admin.ToString()
-                };
-                await _roleManager.CreateAsync(applicationRole);
-            }
-            if (await _roleManager.FindByNameAsync(UserTypeOptions.Publisher.ToString()) is null)
-            {
-                var applicationRole = new ApplicationRole()
-                {
-                    Name = UserTypeOptions.Admin.ToString()
-                };
-                await _roleManager.CreateAsync(applicationRole);
-            }
             
             return Ok(new { Message = "User registered successfully" });
 
