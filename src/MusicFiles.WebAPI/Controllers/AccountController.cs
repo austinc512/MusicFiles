@@ -19,7 +19,7 @@ namespace MusicFiles.WebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        
+
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager)
@@ -34,6 +34,7 @@ namespace MusicFiles.WebAPI.Controllers
         {
             
             // check valid UserTypeOptions before creating ApplicationUser
+            // public controller does not create Admin users.
             if (model.UserType != UserTypeOptions.Customer
                 && model.UserType != UserTypeOptions.Publisher)
             {
@@ -61,7 +62,8 @@ namespace MusicFiles.WebAPI.Controllers
                 return BadRequest(result.Errors);
             }
             
-            // create Roles
+            // Add User to Role
+            await _userManager.AddToRoleAsync(user, model.UserType.ToString());
             
             return Ok(new { Message = "User registered successfully" });
 
