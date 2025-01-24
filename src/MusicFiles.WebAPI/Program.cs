@@ -14,6 +14,18 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });;
 
+// CORS localhost
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        var origins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+        policyBuilder.WithOrigins(origins!) // React App port number
+            .WithHeaders("Authorization", "origin", "accept", "content-type") // allow additional headers
+            .WithMethods("GET", "POST", "PUT", "DELETE");
+    });
+});
+
 var app = builder.Build();
 
 // Enforce HTTPS redirection and HSTS.
