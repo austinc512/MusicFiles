@@ -15,8 +15,10 @@ namespace MusicFiles.Core.DTOs.Request
 
         [Required(ErrorMessage = "Username cannot be blank.")]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "Username must be between 5 and 20 characters long.")]
-        [RegularExpression(@"^[a-zA-Z0-9_.-]*$",
-            ErrorMessage = "Username can only contain letters, numbers, underscores, hyphens, and periods.")]
+        [RegularExpression(@"^(?!.*\.\.)(?!\.)[a-zA-Z0-9_.-]{5,20}(?<!\.)$", 
+            ErrorMessage = "Username can only contain letters, numbers, underscores, hyphens, and periods. " +
+                           "Periods cannot be consecutive, at the start, or at the end.")]
+
         public string? UserName { get; set; }
 
         [Required(ErrorMessage = "Email cannot be blank.")]
