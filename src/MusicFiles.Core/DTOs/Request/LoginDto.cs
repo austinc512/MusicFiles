@@ -13,6 +13,6 @@ public class LoginDto
     public string UserNameOrEmail { get; set; } = String.Empty;
     [Required(ErrorMessage = "Password can't be blank")]
     [DataType(DataType.Password)]
-    public string UserPassword { get; set; } = String.Empty;
-    public bool UserRememberMe { get; set; } = false;
+    public string Password { get; set; } = String.Empty;
+    public bool RememberMe { get; set; } = false;
 }

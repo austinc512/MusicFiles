@@ -37,6 +37,9 @@ namespace MusicFiles.Core.DTOs.Request
         public string ConfirmPassword { get; set; } = String.Empty;
         [Required(ErrorMessage = "User type must be set.")]
         public UserTypeOptions UserType { get; set; } = UserTypeOptions.Customer;
+        // This could be used if Authentication flow is set to log in automatically after registration.
+        // However, certain actions should only be performed after confirming email address.
+        // public bool RememberMe { get; set; } = false;
         
     }    
 }

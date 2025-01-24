@@ -30,13 +30,13 @@ namespace MusicFiles.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             
             // check valid UserTypeOptions before creating ApplicationUser
             // public controller does not create Admin users.
-            if (model.UserType != UserTypeOptions.Customer
-                && model.UserType != UserTypeOptions.Publisher)
+            if (registerDto.UserType != UserTypeOptions.Customer
+                && registerDto.UserType != UserTypeOptions.Publisher)
             {
                 // fix this error handling later
                 // I need a more consistent API for handling errors.
@@ -47,15 +47,15 @@ namespace MusicFiles.WebAPI.Controllers
             {
                 // custom properties of ApplicationUser
                 // PublicUserId set by ApplicationUser constructor
-                FirstName = model.FirstName!,
-                LastName = model.LastName!,
+                FirstName = registerDto.FirstName!,
+                LastName = registerDto.LastName!,
                 // inherited from IdentityUser
                 // Id set by IdentityUser constructor
-                UserName = model.UserName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
+                UserName = registerDto.UserName,
+                Email = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber,
             };
-            var result = await _userManager.CreateAsync(user, model.Password!);
+            var result = await _userManager.CreateAsync(user, registerDto.Password!);
 
             if (!result.Succeeded)
             {
@@ -63,19 +63,21 @@ namespace MusicFiles.WebAPI.Controllers
             }
             
             // Add User to Role
-            await _userManager.AddToRoleAsync(user, model.UserType.ToString());
+            await _userManager.AddToRoleAsync(user, registerDto.UserType.ToString());
+            
+            // _jwt service not implemented yet,
             
             return Ok(new { Message = "User registered successfully" });
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-
-            var user = model.UserNameOrEmail.Contains("@")
-                ? await _userManager.FindByEmailAsync(model.UserNameOrEmail)
-                : await _userManager.FindByNameAsync(model.UserNameOrEmail);
+            // to clarify, username cannot contain "@" symbol
+            var user = loginDto.UserNameOrEmail.Contains("@")
+                ? await _userManager.FindByEmailAsync(loginDto.UserNameOrEmail)
+                : await _userManager.FindByNameAsync(loginDto.UserNameOrEmail);
 
             if (user is null)
             {
@@ -83,7 +85,7 @@ namespace MusicFiles.WebAPI.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, 
-                model.UserPassword, isPersistent: model.UserRememberMe, lockoutOnFailure: false);
+                loginDto.Password, isPersistent: loginDto.RememberMe, lockoutOnFailure: false);
           
             if (!result.Succeeded) return Unauthorized(new { Message = "Invalid password." });
         
