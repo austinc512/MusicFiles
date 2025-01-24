@@ -27,9 +27,10 @@ namespace MusicFiles.Core.DTOs.Request
         [DataType(DataType.Password)]
         // Password annotation can still provide semantic metadata (Swagger, if you use it),
         // but this provides no functionality
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z\d@]).{6,50}$", 
-            ErrorMessage = "Password must be between 6 and 50 characters long and contain at least one uppercase letter, " +
-                           "one lowercase letter, one digit, and one non-alphanumeric character (except for the \"@\" symbol).")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W).{6,50}$", 
+            ErrorMessage = "Password must be between 6 and 50 characters long, contain at least one uppercase letter, " +
+                           "one lowercase letter, one digit, and one non-alphanumeric character.")]
+
         public string? Password { get; set; }
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Confirm Password cannot be blank.")]
