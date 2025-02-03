@@ -81,13 +81,26 @@ namespace MusicFiles.WebAPI.Controllers
 
             if (user is null)
             {
-                return Unauthorized(new { Message = "Invalid username or email." });
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                return Unauthorized(new { Message = "Invalid username, email, or password." });
             }
+            
+            // email verification is a separate step that needs to be implemented on Register action first.
+            // if (!await _userManager.IsEmailConfirmedAsync(user))
+            // {
+            //     return Unauthorized(new { Message = "Please confirm your email address before logging in." });
+            // }
 
             var result = await _signInManager.PasswordSignInAsync(user, 
                 loginDto.Password, isPersistent: loginDto.RememberMe, lockoutOnFailure: false);
-          
-            if (!result.Succeeded) return Unauthorized(new { Message = "Invalid password." });
+
+            if (!result.Succeeded)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                return Unauthorized(new { Message = "Invalid username, email, or password." });
+            }
+            
+            // ApplicationUser? applicationUser = await _userManager.FindByEmailAsync(loginDto.UserNameOrEmail);
         
             // _jwt service not implemented yet, but might look something like this:
             // var authenticationResponse = _jwtService.CreateJwtToken(user);

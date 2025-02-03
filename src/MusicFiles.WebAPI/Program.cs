@@ -29,11 +29,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Enforce HTTPS redirection and HSTS.
-// HSTS is disabled in Development to avoid caching of HSTS settings on localhost
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHsts(); // Add HSTS for production environments
-}
+// HSTS can be disabled in Development to avoid caching of HSTS settings on localhost
+// if (!app.Environment.IsDevelopment())
+// {
+//     app.UseHsts(); // Add HSTS for production environments
+// }
+
+// I think I'm just going to keep this in development too.
+// once I get to the front end, maybe I just to all my testing in incognito to avoid caching, use cmd + shit + r to refresh the page.
+// I'll worry about that later.
+app.UseHsts();
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 
 // Configure middleware pipeline
