@@ -5,5 +5,5 @@ namespace MusicFiles.Core.ServiceContracts;
 
 public interface IJwtService
 {
-    AuthenticationResponse CreateJwtToken(ApplicationUser user);
+    AuthenticationResponse CreateJwtToken(ApplicationUser user, List<string> roles);
 }

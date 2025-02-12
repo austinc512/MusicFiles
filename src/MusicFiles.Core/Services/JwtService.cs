@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using MusicFiles.Core.Domain.IdentityEntities;
 using MusicFiles.Core.DTOs.Response;
 using MusicFiles.Core.ServiceContracts;
@@ -14,28 +16,62 @@ public class JwtService : IJwtService
     {
         _configuration = configuration;
     }
-    public AuthenticationResponse CreateJwtToken(ApplicationUser user)
+    // general notes:
+    // you can trust the Token for authentication purposes assuming the front end is secure
+    // Store JWTs in secure, HTTP-only, same-site cookies
+    // enforce HTTPS, HSTS, short-lived access and refresh tokens,
+    // device/session tracking (log out user is token is used from unexpected location)
+    // long/random Jwt:Key
+    
+    // For performance, we want to avoid checking the PublicUserId in the JWT matching against
+    // the user's ID in the DB.
+    
+    // Hybrid approach (a feature much later down the pipeline): 
+    // Store PublicUserId in Redis (or an in-memory cache) when the user logs in.
+    // validate JWT token claim against cached value
+    // in the event of a cache miss, fall back to DB query
+    public AuthenticationResponse CreateJwtToken(ApplicationUser user, List<string> roles)
     {
-        var expiration =
-            DateTimeOffset.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:EXPIRATION_MINUTES"]));
-        var claims = new Claim[]
+        var expiration = DateTimeOffset.UtcNow.AddMinutes(
+            Convert.ToDouble(_configuration["Jwt:EXPIRATION_MINUTES"]));
+
+        var claims = new List<Claim>
         {
-            // subject -- unique value of user
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            // JWT ID
+            new Claim(JwtRegisteredClaimNames.Sub, user.PublicUserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            // Issued At (date/time of token generation)
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                
-            // OPTIONALS:
-            // Unique name identifier of the user (Email)
-            // this one isn't being recognized when we call it in the Controller
-            new Claim(ClaimTypes.NameIdentifier, user.Email),
-            // name of the user
-            // new Claim(ClaimTypes.Name, user.PersonName),
-            // so we create this one instead
-            new Claim(ClaimTypes.Email, user.Email.ToString()),
+            new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+            new Claim(JwtRegisteredClaimNames.Exp, expiration.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
         };
-        throw new NotImplementedException();
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var jwtKey = _configuration["Jwt:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey))
+            throw new InvalidOperationException("JWT secret key is missing in the configuration.");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = expiration.UtcDateTime,
+            SigningCredentials = credentials,
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"]
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+
+        // Optional could go here, something like:
+        // "JWT token generated for user {UserId} with expiration at {Expiration}"
+
+        return new AuthenticationResponse { Token = tokenString, Expiration = expiration };
     }
+
 }
