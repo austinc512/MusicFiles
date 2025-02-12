@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using MusicFiles.Core.Domain.IdentityEntities;
 using MusicFiles.Core.DTOs.Request;
 using MusicFiles.Core.Enums;
+using MusicFiles.Core.ServiceContracts;
+using MusicFiles.Core.Services;
 
 namespace MusicFiles.WebAPI.Controllers
 {
@@ -19,14 +21,17 @@ namespace MusicFiles.WebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IJwtService _jwtService;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<ApplicationRole> roleManager)
+            RoleManager<ApplicationRole> roleManager,
+            IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -65,7 +70,10 @@ namespace MusicFiles.WebAPI.Controllers
             // Add User to Role
             await _userManager.AddToRoleAsync(user, registerDto.UserType.ToString());
             
-            // _jwt service not implemented yet,
+            // I haven't decided whether a user should be able to log in immediately,
+            // or if email verification is a required step before doing anything.
+            // It's definitely a better user experience to just allow users to create
+            // an account immediately, but that has security implications.
             
             return Ok(new { Message = "User registered successfully" });
 
@@ -99,21 +107,16 @@ namespace MusicFiles.WebAPI.Controllers
                 await Task.Delay(TimeSpan.FromSeconds(2));
                 return Unauthorized(new { Message = "Invalid username, email, or password." });
             }
-            
-            // ApplicationUser? applicationUser = await _userManager.FindByEmailAsync(loginDto.UserNameOrEmail);
-        
-            // _jwt service not implemented yet, but might look something like this:
-            // var authenticationResponse = _jwtService.CreateJwtToken(user);
+
+            var userRoles = new List<string>(await _userManager.GetRolesAsync(user));
+            var authenticationResponse = _jwtService.CreateJwtToken(user, userRoles);
             
             // Update refresh token in user record
             // user.RefreshToken = authenticationResponse.RefreshToken;
             // user.RefreshTokenExpirationDateTime = authenticationResponse.RefreshTokenExpirationDateTime;
             // await _userManager.UpdateAsync(user);
             
-            // return Ok(authenticationResponse);
-            
-            // placeholder value for the time being
-            return Ok(new { Message = "User successfully logged in" });
+            return Ok(authenticationResponse);
             
         }
         

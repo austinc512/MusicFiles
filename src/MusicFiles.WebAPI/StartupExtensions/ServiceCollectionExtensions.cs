@@ -67,6 +67,9 @@ public static class ServiceCollectionExtensions
             .AddDefaultTokenProviders()
             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, MusicFilesDbContext, Guid>>()
             .AddRoleStore<RoleStore<ApplicationRole, MusicFilesDbContext, Guid>>();
+        
+        // JWT
+        services.AddTransient<IJwtService, JwtService>();
 
         services.AddScoped<IMusicFilesRepository, MusicFilesRepository>();
         services.AddScoped<IMusicDataService, MusicDataService>();
