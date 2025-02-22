@@ -9,6 +9,6 @@ public class AuthenticationResponse
     public string? Token { get; set; } = string.Empty;
     public DateTimeOffset Expiration { get; set; }
     // still need to implement
-    // public string? RefreshToken { get; set; } = string.Empty;
-    // public DateTimeOffset RefreshTokenExpirationDateTime { get; set; }
+    public string? RefreshToken { get; set; } = string.Empty;
+    public DateTimeOffset RefreshTokenExpiration { get; set; }
 }

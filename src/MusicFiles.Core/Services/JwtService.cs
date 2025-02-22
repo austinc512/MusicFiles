@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -71,7 +72,21 @@ public class JwtService : IJwtService
         // Optional could go here, something like:
         // "JWT token generated for user {UserId} with expiration at {Expiration}"
 
-        return new AuthenticationResponse { Token = tokenString, Expiration = expiration };
+        return new AuthenticationResponse
+        {
+            Token = tokenString, 
+            Expiration = expiration,
+            RefreshToken = GenerateRefreshToken(),
+            RefreshTokenExpiration = DateTimeOffset.UtcNow.AddMinutes(Convert.ToDouble(_configuration["RefreshToken:EXPIRATION_MINUTES"]))
+        };
+    }
+
+    private string GenerateRefreshToken()
+    {
+        var bytes = new byte[64];
+        var randomNumber = RandomNumberGenerator.Create();
+        randomNumber.GetBytes(bytes);
+        return Convert.ToBase64String(bytes);
     }
 
 }

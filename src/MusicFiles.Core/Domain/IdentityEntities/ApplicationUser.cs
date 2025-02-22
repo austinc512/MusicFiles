@@ -10,6 +10,9 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? FirstName { get; set; }
     [MaxLength(50)]
     public string? LastName { get; set; }
+    [MaxLength(88)] // looking like it's actually 88
+    public string? RefreshToken { get; set; } = string.Empty;
+    public DateTimeOffset RefreshTokenExpiration { get; set; }
     
     // satisfy EF Core
     public ApplicationUser()
