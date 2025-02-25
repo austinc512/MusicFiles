@@ -109,7 +109,7 @@ namespace MusicFiles.WebAPI.Controllers
             {
                 // haven't instantiated logger class yet
                 // _logger.LogError("Failed to update refresh token for user: {user.Id}", user.Id);
-                Console.WriteLine($"Failed to update refresh token for user: {user.Id}", user.Id);
+                Console.WriteLine($"Failed to update refresh token for user: {user.Id}");
                 return Unauthorized(new { Message = "Invalid username, email, or password." });
             }
 

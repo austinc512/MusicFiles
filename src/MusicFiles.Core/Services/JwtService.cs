@@ -52,12 +52,6 @@ public class JwtService : IJwtService
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        Console.WriteLine("LOGGING GENERATED CLAIMS IN CreateJwtToken:");
-        foreach (var claim in claims)
-        {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
-        }
-
         var jwtKey = _configuration["Jwt:Key"];
         if (string.IsNullOrWhiteSpace(jwtKey))
             throw new InvalidOperationException("JWT secret key is missing in the configuration.");
@@ -115,12 +109,6 @@ public class JwtService : IJwtService
                 StringComparison.InvariantCultureIgnoreCase))
         {
             throw new SecurityTokenException("Invalid token");
-        }
-
-        Console.WriteLine("Logging claims in principal");
-        foreach (var claim in principal.Claims)
-        {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
         }
 
         return principal;
