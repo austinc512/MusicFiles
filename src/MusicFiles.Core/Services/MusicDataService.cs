@@ -16,12 +16,17 @@ namespace MusicFiles.Core.Services
     // Validates the domain-specific business rules and logic (e.g., checking that a user is authorized to access a resource, ensuring file sizes or types conform to business policies).
     // Can perform structural or basic validation if needed, particularly when interacting with external systems like repositories or APIs.
     // Example: Verify that a user’s file quota is not exceeded before inserting a record in the database.
-    public class MusicDataService(IMusicFilesRepository musicFilesRepository) : IMusicDataService
+    public class MusicDataService : IMusicDataService
     {
+        private IMusicFilesRepository _musicFilesRepository;
+        public MusicDataService(IMusicFilesRepository musicFilesRepository)
+        {
+            _musicFilesRepository = musicFilesRepository;
+        }
         // modify for size parameter later.
         public async Task<List<MusicInfoDto>> ListMusicMediaFilesByPublicId(string userPublicId)
         {
-            var musicFileEntities = await musicFilesRepository.GetByUserAsync(userPublicId);
+            var musicFileEntities = await _musicFilesRepository.GetByUserAsync(userPublicId);
 
             var response = musicFileEntities.Select((item) => new MusicInfoDto()
                 {
@@ -52,7 +57,7 @@ namespace MusicFiles.Core.Services
                 musicFileRequest.LastModified
                 );
             
-            var response = await musicFilesRepository.AddAsync(sheetMusicEntity);
+            var response = await _musicFilesRepository.AddAsync(sheetMusicEntity);
             
             return new MusicResponseDto()
             {

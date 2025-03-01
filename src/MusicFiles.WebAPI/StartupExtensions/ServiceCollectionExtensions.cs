@@ -1,10 +1,13 @@
+using System.Text;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MusicFiles.Core.Domain.IdentityEntities;
 using MusicFiles.Core.RepositoryContracts;
 using MusicFiles.Core.ServiceContracts;
@@ -77,6 +80,45 @@ public static class ServiceCollectionExtensions
         services.AddAuthorization(options =>
         {
             // Endpoints will require authentication unless overridden with [AllowAnonymous]
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
+        
+        // Auth Context
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        
+        var jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is missing");
+        var jwtIssuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer is missing");
+        var jwtAudience = configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience is missing");
+        
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtIssuer,
+
+                ValidateAudience = true,
+                ValidAudience = jwtAudience,
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromSeconds(5) 
+                // ^^ leeway window that accounts for minor differences between clocks on
+                // different machines (the server that issues the token vs. the server that validates it)
+            };
+        });
+        
+        services.AddAuthorization(options =>
+        {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
