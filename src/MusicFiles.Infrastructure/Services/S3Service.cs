@@ -8,7 +8,11 @@ namespace MusicFiles.Infrastructure.Services
     // which delegates S3-related operations to this class.
     public class S3Service(IAmazonS3 amazonS3Client, string bucketName) : IS3Service
     {
-        
+        /// <summary>
+        /// This method is solely for debugging purposes to troubleshoot S3 connections.
+        /// It may be worth removing in the future to prevent usage.
+        /// </summary>
+        /// <returns>A list of S3 Bucket Names</returns>
         public async Task<IEnumerable<string?>> ListBuckets()
         {
             var listResponse = await amazonS3Client.ListBucketsAsync();
