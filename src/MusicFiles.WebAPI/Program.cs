@@ -30,6 +30,9 @@ builder.Services.AddCors(options =>
 // Configure logging
 builder.Logging.ConfigureLogging();
 
+// Configure OpenTelemetry tracing
+builder.Services.ConfigureTracing();
+
 var app = builder.Build();
 
 // Enforce HTTPS redirection and HSTS.
