@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MusicFiles.Observability;
 using MusicFiles.WebAPI.StartupExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,9 @@ builder.Services.AddCors(options =>
             .WithMethods("GET", "POST", "PUT", "DELETE");
     });
 });
+
+// Configure logging
+builder.Logging.ConfigureLogging();
 
 var app = builder.Build();
 

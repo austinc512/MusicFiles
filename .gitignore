@@ -24,3 +24,7 @@ Migrations/
 
 # internal usage
 DevController/
+
+# Ignore logs
+Logs/
+*.log

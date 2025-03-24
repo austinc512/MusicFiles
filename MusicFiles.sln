@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicFiles.Core", "src\Musi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicFiles.Infrastructure", "src\MusicFiles.Infrastructure\MusicFiles.Infrastructure.csproj", "{2CA3845E-1A68-42A9-A01B-C1064171938B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicFiles.Observability", "src\MusicFiles.Observability\MusicFiles.Observability.csproj", "{70AA3F2A-0CA3-44B9-906D-A41345BECB69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +34,15 @@ Global
 		{2CA3845E-1A68-42A9-A01B-C1064171938B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CA3845E-1A68-42A9-A01B-C1064171938B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CA3845E-1A68-42A9-A01B-C1064171938B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70AA3F2A-0CA3-44B9-906D-A41345BECB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70AA3F2A-0CA3-44B9-906D-A41345BECB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70AA3F2A-0CA3-44B9-906D-A41345BECB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70AA3F2A-0CA3-44B9-906D-A41345BECB69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F3A0C49C-BD26-48E3-8C0F-DE3F6C81DF77} = {024E57EA-5B94-4DCB-A3F9-A4BC76B6DFC8}
 		{53F7FB20-8859-4051-8A43-E0E17782695C} = {024E57EA-5B94-4DCB-A3F9-A4BC76B6DFC8}
 		{2CA3845E-1A68-42A9-A01B-C1064171938B} = {024E57EA-5B94-4DCB-A3F9-A4BC76B6DFC8}
+		{70AA3F2A-0CA3-44B9-906D-A41345BECB69} = {024E57EA-5B94-4DCB-A3F9-A4BC76B6DFC8}
 	EndGlobalSection
 EndGlobal
