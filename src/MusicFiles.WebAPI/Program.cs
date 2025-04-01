@@ -33,6 +33,9 @@ builder.Logging.ConfigureLogging();
 // Configure OpenTelemetry tracing
 builder.Services.ConfigureTracing();
 
+// Configure metrics
+builder.Services.ConfigureMetrics();
+
 var app = builder.Build();
 
 // Enforce HTTPS redirection and HSTS.
