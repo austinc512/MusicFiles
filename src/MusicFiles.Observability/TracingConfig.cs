@@ -14,7 +14,11 @@ namespace MusicFiles.Observability
                         .AddAspNetCoreInstrumentation() // Capture HTTP requests
                         .AddHttpClientInstrumentation() // Capture outgoing HTTP requests
                         .AddSqlClientInstrumentation() // Capture database calls
-                        .AddConsoleExporter(); // Export traces to the console for now
+                        .AddConsoleExporter() // Export traces to the console for now
+                        .AddOtlpExporter(options =>
+                        {
+                            options.Endpoint = new Uri("http://localhost:4317");
+                        });
                 });
         }
     }
